@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Digald/Bamazon#readme",
   "dependencies": {
+    "console-table": "^0.1.2",
     "inquirer": "^5.0.1",
     "mysql": "^2.15.0"
   }
