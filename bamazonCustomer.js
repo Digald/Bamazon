@@ -29,6 +29,30 @@ function seeItems() {
     }
     var wt = new WordTable(Object.keys(res[0]), table);
     console.log(wt.string());
+    console.log(table);
     // Inquirer prompt asking what product they would like to buy
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "item",
+          message:
+            "Type in the id of the item you want to buy from the list above...",
+          validate: function(val) {
+            return val > 0 && val <= table.length;
+          }
+        },
+        {
+          type: "input",
+          name: "quantity",
+          message: "Type in a valid quantity for the item you want to buy...",
+          validate: function(val) {
+            return val !== "";
+          }
+        }
+      ])
+      .then(function(answer) {
+        console.log(answer);
+      });
   });
 }
