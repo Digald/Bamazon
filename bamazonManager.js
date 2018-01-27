@@ -69,3 +69,6 @@ function lowInventory() {
         console.log(wt.string());
     });
 }
+
+// function addInventory() {
+// }
