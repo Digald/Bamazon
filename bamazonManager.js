@@ -35,7 +35,7 @@ function viewOptions() {
         viewProducts();
         break;
       case "View Low Inventory":
-        lowInventory()
+        lowInventory();
         break;
     }
   });
@@ -58,17 +58,29 @@ function viewProducts() {
 }
 
 function lowInventory() {
-    connection.query('SELECT id, product_name, stock_quantity FROM products WHERE stock_quantity < 5', function(err, res){
-        // console.log(res);
-        var table = [];
-        for (var i = 0; i < res.length; i++){
-            table.push(Object.values(res[i]));
-        }
-        var wt = new WordTable(Object.keys(res[0]), table);
-        console.log('The following items are low on inventory:');
-        console.log(wt.string());
-    });
+  connection.query(
+    "SELECT id, product_name, stock_quantity FROM products WHERE stock_quantity < 5",
+    function(err, res) {
+      // console.log(res);
+      var table = [];
+      for (var i = 0; i < res.length; i++) {
+        table.push(Object.values(res[i]));
+      }
+      var wt = new WordTable(Object.keys(res[0]), table);
+      console.log("The following items are low on inventory:");
+      console.log(wt.string());
+    }
+  );
 }
 
-// function addInventory() {
-// }
+function addInventory() {
+  connection.query(
+    "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?",
+    [],
+    function(err, res) {
+      if (err) {
+        return console.log(err);
+      }
+    }
+  );
+}
