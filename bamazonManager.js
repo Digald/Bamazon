@@ -135,10 +135,12 @@ function addProduct() {
         message: "Enter the name of the product you would like to add..."
       },
       {
-        type: "list",
+        type: "input",
         name: "department",
-        message: "Choose the department the product belongs to...",
-        choices: ["Arts and Crafts", "Clothes", "Electronics", "Toys"]
+        message: "Enter the department the product belongs to...",
+        validate: function(val) {
+          // return require.indexOf val != of pushed array of departments from supervisor
+        }
       },
       {
         type: "input",
