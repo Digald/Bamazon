@@ -17,59 +17,64 @@ connection.connect(function(err) {
 });
 
 function seeItems() {
-  connection.query("SELECT * FROM products", function(err, res) {
-    // Log error
-    if (err) {
-      return console.log(err);
-    }
-    // Display table of products upon running
-    var table = [];
-    for (var i = 0; i < res.length; i++) {
-      table.push(Object.values(res[i]));
-    }
-    var wt = new WordTable(Object.keys(res[0]), table);
-    console.log(wt.string());
-    // console.log(table);
-    // Inquirer prompt asking what product they would like to buy
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "item",
-          message:
-            "Type in the id of the item you want to buy from the list above...",
-          validate: function(val) {
-            return val > 0 && val <= table.length;
-          }
-        },
-        {
-          type: "input",
-          name: "quantity",
-          message: "Type in a valid quantity for the item you want to buy...",
-          validate: function(val) {
-            return val !== "" && val > 0;
-          }
-        }
-      ])
-      .then(function(answer) {
-        // console.log(answer);
-        if (res[answer.item - 1].stock_quantity < answer.quantity) {
-          console.log("Insufficient Stock! Your order has been canceled...");
-        } else {
-          connection.query(
-            "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?",
-            [answer.quantity, answer.item],
-            function(err, res) {
-              if (err) {
-                return console.log(err);
-              }
-              console.log("The items have been subtracted from our inventory.");
+  connection.query(
+    "SELECT id, product_name, department_name, price, stock_quantity FROM products",
+    function(err, res) {
+      // Log error
+      if (err) {
+        return console.log(err);
+      }
+      // Display table of products upon running
+      var table = [];
+      for (var i = 0; i < res.length; i++) {
+        table.push(Object.values(res[i]));
+      }
+      var wt = new WordTable(Object.keys(res[0]), table);
+      console.log(wt.string());
+      // console.log(table);
+      // Inquirer prompt asking what product they would like to buy
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "item",
+            message:
+              "Type in the id of the item you want to buy from the list above...",
+            validate: function(val) {
+              return val > 0 && val <= table.length;
             }
-          );
-          displayPrice(answer);
-        }
-      });
-  });
+          },
+          {
+            type: "input",
+            name: "quantity",
+            message: "Type in a valid quantity for the item you want to buy...",
+            validate: function(val) {
+              return val !== "" && val > 0;
+            }
+          }
+        ])
+        .then(function(answer) {
+          // console.log(answer);
+          if (res[answer.item - 1].stock_quantity < answer.quantity) {
+            console.log("Insufficient Stock! Your order has been canceled...");
+          } else {
+            connection.query(
+              "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?",
+              [answer.quantity, answer.item],
+              function(err, res) {
+                if (err) {
+                  return console.log(err);
+                }
+                console.log(
+                  "The items have been subtracted from our inventory."
+                );
+              }
+            );
+            displayPrice(answer);
+          }
+        });
+    }
+  );
 }
 
 function displayPrice(answer) {
@@ -83,5 +88,13 @@ function displayPrice(answer) {
         totalCost.toFixed(2) +
         "! Thank you for your purchase."
     );
+    updateSales(totalCost, answer);
   });
+}
+function updateSales(totalCost, answer) {
+  // console.log(totalCost);
+  // console.log(answer);
+  connection.query(
+    "UPDATE products SET product_sales = product_sales + ? WHERE id = ?", [totalCost, answer.item]
+  );
 }
