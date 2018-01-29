@@ -13,7 +13,24 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  productSales()
+  inquirer
+    .prompt({
+      type: "list",
+      name: "options",
+      message: "What would you like to do?",
+      choices: ["View product sales by department", "Create new department"]
+    })
+    .then(function(answer) {
+      console.log(answer);
+      switch (answer.options) {
+        case "View product sales by department":
+          productSales();
+          break;
+        case "Create new department":
+          createDepartment();
+          break;
+      }
+    });
 });
 
 function productSales() {
@@ -42,8 +59,28 @@ function productSales() {
   );
 }
 
-function displaySales() {
-  connection.query("SELECT * FROM departments", function(err, res) {
-    console.log(res);
-  });
+function createDepartment() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "department",
+        message: "Type the department you want to add..."
+      },
+      {
+        type: "input",
+        name: "overhead",
+        message: "Type in the overhead costs..."
+      }
+    ])
+    .then(function(answer) {
+      console.log(answer);
+      connection.query(
+        "INSERT INTO departments (department_name, over_head_costs) VALUES (?,?)",
+        [answer.department, answer.overhead],
+        function(err, res) {
+          console.log("Department has been added!");
+        }
+      );
+    });
 }
