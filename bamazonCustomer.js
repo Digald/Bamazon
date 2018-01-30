@@ -3,19 +3,20 @@ var inquirer = require("inquirer");
 var mysql = require("mysql");
 var WordTable = require("word-table");
 
-// Connect to mysql
+// Credentials to my DB
 var connection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "root",
   database: "bamazon"
 });
-
+// Connection created and ran here
 connection.connect(function(err) {
   if (err) throw err;
   seeItems();
 });
 
+// function to see products displayed on a table in the console
 function seeItems() {
   connection.query(
     "SELECT id, product_name, department_name, price, stock_quantity FROM products",
@@ -29,9 +30,10 @@ function seeItems() {
       for (var i = 0; i < res.length; i++) {
         table.push(Object.values(res[i]));
       }
+      // word table package use
       var wt = new WordTable(Object.keys(res[0]), table);
       console.log(wt.string());
-      // console.log(table);
+
       // Inquirer prompt asking what product they would like to buy
       inquirer
         .prompt([
@@ -54,10 +56,11 @@ function seeItems() {
           }
         ])
         .then(function(answer) {
-          // console.log(answer);
+          // take answers to first check if there is enough stock to complete the transaction
           if (res[answer.item - 1].stock_quantity < answer.quantity) {
             console.log("Insufficient Stock! Your order has been canceled...");
           } else {
+            // if there is enough stock subtract user input from the product table stock
             connection.query(
               "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?",
               [answer.quantity, answer.item],
@@ -76,7 +79,7 @@ function seeItems() {
     }
   );
 }
-
+// calculates the total price of the products and shows it to the user, also updates the product table 
 function displayPrice(answer) {
   connection.query("SELECT price FROM products", function(err, res) {
     if (err) {
@@ -91,6 +94,7 @@ function displayPrice(answer) {
     updateSales(totalCost, answer);
   });
 }
+// adds sales to products table required by the bamazonSupervisor.js script
 function updateSales(totalCost, answer) {
   // console.log(totalCost);
   // console.log(answer);

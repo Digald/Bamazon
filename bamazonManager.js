@@ -16,6 +16,7 @@ connection.connect(function(err) {
   viewOptions();
 });
 
+// list of menu options to include in inquirer prompt
 var menu = {
   type: "list",
   name: "menu",
