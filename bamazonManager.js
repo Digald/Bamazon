@@ -112,7 +112,7 @@ function addInventory() {
         }
       ])
       .then(function(answer) {
-        console.log(answer);
+        // console.log(answer);
         connection.query(
           "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?",
           [answer.amount, answer.item],
@@ -139,9 +139,9 @@ function addProduct() {
         type: "input",
         name: "department",
         message: "Enter the department the product belongs to...",
-        validate: function(val) {
-          // return require.indexOf val != of pushed array of departments from supervisor
-        }
+        // validate: function(val) {
+        //   return require.indexOf val != of pushed array of departments from supervisor?
+        // }
       },
       {
         type: "input",
@@ -161,7 +161,7 @@ function addProduct() {
       }
     ])
     .then(function(answer) {
-      console.log(answer);
+      // console.log(answer);
       connection.query(
         "INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?,?,?,?)",
         [answer.product, answer.department, answer.price, answer.stock],

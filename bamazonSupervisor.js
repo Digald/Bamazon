@@ -21,7 +21,7 @@ connection.connect(function(err) {
       choices: ["View product sales by department", "Create new department"]
     })
     .then(function(answer) {
-      console.log(answer);
+      // console.log(answer);
       switch (answer.options) {
         case "View product sales by department":
           productSales();
@@ -74,7 +74,7 @@ function createDepartment() {
       }
     ])
     .then(function(answer) {
-      console.log(answer);
+      // console.log(answer);
       connection.query(
         "INSERT INTO departments (department_name, over_head_costs) VALUES (?,?)",
         [answer.department, answer.overhead],
